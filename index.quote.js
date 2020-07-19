@@ -32,7 +32,11 @@ let options = {
     },
     qs: {
         symbol: ticker,
-        apikey: clientid
+        apikey: clientid,
+        strikeCount: 1,
+        contractType: 'CALL',
+        // strike: '18',
+        toDate: '2020-07-30'
     }
 }
 
@@ -40,8 +44,12 @@ request.get(options, function(error, response, body) {
     httpStatusCode = (response === undefined) ? 0 : response.statusCode;
 
     if (response.statusCode == 200) {
-        let optionsChain = JSON.stringify(body);
-        console.log(optionsChain);
+        console.log(body);
+        // let optionsChain = JSON.stringify(body);
+        // console.log(optionsChain);
+        // fse.outputFileSync(responseFile, JSON.stringify(response));
+        // fse.outputFileSync(responseFile, JSON.stringify(body));
+        fse.outputFileSync(responseFile, body);
     } else {
         fse.outputFileSync(responseFile, JSON.stringify(response));
         console.log(httpStatusCode);
