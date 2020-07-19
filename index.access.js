@@ -2,6 +2,7 @@ const fse = require('fs-extra');
 const request = require('request');
 
 let refreshFile = '../aut/tok.json';
+let clientid = fse.readFileSync('../aut/client.id', 'utf8');
 
 let token_file = fse.readFileSync('../aut/tok.json', 'utf8');
 let token_JSON = JSON.parse(token_file);
@@ -16,7 +17,7 @@ let options = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_code,
         'access_type': 'offline',
-        'client_id': 'JWOOKNYCAEJLUKYA19FFAF0I1FV4Z4RC@AMER.OAUTHAP'
+        'client_id': `${clientid}@AMER.OAUTHAP`
     }
 }
 
@@ -25,9 +26,13 @@ request(options, function(error, response, body) {
 
     if (response.statusCode == 200) {
         oAuthReply = JSON.parse(body);
-        let refreshCode = oAuthReply.refresh_token;
+        // let refreshCode = oAuthReply.refresh_token;
         // console.log(refreshCode);
-        fse.outputFileSync(refreshFile, JSON.stringify(oAuthReply));
+        let authJson = oAuthReply;
+        authJson.timestamp = Date.now();
+        fse.outputFileSync(refreshFile, JSON.stringify(authJson));
+        // let token_file = fse.readFileSync('../aut/tok.json', 'utf8');
+        // console.log(token_file);
         console.log('done');
     }
 

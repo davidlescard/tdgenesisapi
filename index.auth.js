@@ -56,7 +56,9 @@ app.get('/', function(req, res){
             oAuthReply = JSON.parse(body);
             let refreshCode = oAuthReply.refresh_token;
             console.log(refreshCode);
-            fse.outputFileSync(refreshFile, JSON.stringify(oAuthReply));
+            let authJson = JSON.stringify(oAuthReply);
+            authJson.date = Date.now();
+            fse.outputFileSync(refreshFile, authJson);
             console.log('done');
         }
         //
