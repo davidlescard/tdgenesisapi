@@ -17,9 +17,10 @@ let elapsed = Date.now() - token_JSON.timestamp;
 if (elapsed / 1000 > 29 * 60 ) {
     // console.log(elapsed);
     // console.log(token_JSON.timestamp);
-    // console.log('fetching new access token');
+    console.log('fetching new access token');
     require('./index.access');
-    // console.log('hopefully got new access token');
+    refreshFile = '../aut/tok.json';
+    console.log('hopefully got new access token');
 }
 
 let ticker = 'T';
@@ -33,10 +34,10 @@ let options = {
     qs: {
         symbol: ticker,
         apikey: clientid,
-        strikeCount: 1,
-        contractType: 'CALL',
+        // strikeCount: 1,
+        // contractType: 'CALL',
         // strike: '18',
-        toDate: '2020-07-30'
+        // toDate: '2020-07-30'
     }
 }
 
@@ -44,12 +45,14 @@ request.get(options, function(error, response, body) {
     httpStatusCode = (response === undefined) ? 0 : response.statusCode;
 
     if (response.statusCode == 200) {
-        console.log(body);
-        // let optionsChain = JSON.stringify(body);
-        // console.log(optionsChain);
-        // fse.outputFileSync(responseFile, JSON.stringify(response));
-        // fse.outputFileSync(responseFile, JSON.stringify(body));
+        // console.log(body);
         fse.outputFileSync(responseFile, body);
+
+        let resp_file = fse.readFileSync(responseFile, 'utf8');
+        // let something = JSON.parse(resp_file).symbol;
+        let something = JSON.parse(resp_file).putExpDateMap;
+        console.log(something);
+
     } else {
         fse.outputFileSync(responseFile, JSON.stringify(response));
         console.log(httpStatusCode);
