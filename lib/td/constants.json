@@ -1,0 +1,25 @@
+{
+    "baseUrl": "https://api.tdameritrade.com/v1/",
+    "auth": {
+        "refreshFile": "aut/tok.json",
+        "responseFile": "aut/response.json",
+        "clientid": "aut/client.id"
+    },
+    "option": {
+        
+    },
+    "endpoint": {
+        "tokenUrl": "/oauth2/token",
+        "chainsUrl": "/marketdata/chains"
+    },
+    "content_types": {
+        "applicationjson": "application/json",
+        "x-www-form": "application/x-www-form-urlencoded"
+    },
+    "grant_types": {
+        "refresh_token" : "refresh_token"
+    },
+    "access_types": {
+        "offline": "offline"
+    }
+}

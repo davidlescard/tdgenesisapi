@@ -21,6 +21,8 @@ let options = {
     }
 }
 
+console.log(JSON.stringify(options));
+
 request(options, function(error, response, body) {
     httpStatusCode = (response === undefined) ? 0 : response.statusCode;
 
