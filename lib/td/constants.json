@@ -3,14 +3,20 @@
     "auth": {
         "refreshFile": "aut/tok.json",
         "responseFile": "aut/response.json",
-        "clientid": "aut/client.id"
+        "clientid": "aut/client.id",
+        "accountid": "aut/account.id"
     },
     "option": {
         
     },
     "endpoint": {
         "tokenUrl": "/oauth2/token",
-        "chainsUrl": "/marketdata/chains"
+        "chainsUrl": "/marketdata/chains",
+        "instruments": "/instruments",
+        "quotes": "/marketdata/quotes",
+        "orders": "/orders",
+        "savedorders": "/savedorders",
+        "accounts": "/accounts"
     },
     "content_types": {
         "applicationjson": "application/json",
