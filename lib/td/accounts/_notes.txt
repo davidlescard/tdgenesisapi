@@ -152,3 +152,346 @@ Order Type info
     }
   ]
 }
+
+
+
+================Trigger OCO==================
+{
+  "orderStrategyType": "TRIGGER",
+  "session": "NORMAL",
+  "duration": "DAY",
+  "orderType": "LIMIT",
+  "price": 14.97,
+  "orderLegCollection": [
+    {
+      "instruction": "BUY",
+      "quantity": 5,
+      "instrument": {
+        "assetType": "EQUITY",
+        "symbol": "XYZ"
+      }
+    }
+  ],
+  "childOrderStrategies": [
+    {
+      "orderStrategyType": "OCO",
+      "childOrderStrategies": [
+        {
+          "orderStrategyType": "SINGLE",
+          "session": "NORMAL",
+          "duration": "GOOD_TILL_CANCEL",
+          "orderType": "LIMIT",
+          "price": 15.27,
+          "orderLegCollection": [
+            {
+              "instruction": "SELL",
+              "quantity": 5,
+              "instrument": {
+                "assetType": "EQUITY",
+                "symbol": "XYZ"
+              }
+            }
+          ]
+        },
+        {
+          "orderStrategyType": "SINGLE",
+          "session": "NORMAL",
+          "duration": "GOOD_TILL_CANCEL",
+          "orderType": "STOP",
+          "stopPrice": 11.27,
+          "orderLegCollection": [
+            {
+              "instruction": "SELL",
+              "quantity": 5,
+              "instrument": {
+                "assetType": "EQUITY",
+                "symbol": "XYZ" 
+               }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+
+===============OPTIONS====================
+
+*** SINGLE ***
+Buy to open 10 contracts of the XYZ March 20, 2015 $49 CALL at a Limit of $6.45 good for the Day.
+{
+  "complexOrderStrategyType": "NONE",
+  "orderType": "LIMIT",
+  "session": "NORMAL",
+  "price": "6.45",
+  "duration": "DAY",
+  "orderStrategyType": "SINGLE",
+  "orderLegCollection": [
+    {
+      "instruction": "BUY_TO_OPEN",
+      "quantity": 10,
+      "instrument": {
+        "symbol": "XYZ_032015C49",
+        "assetType": "OPTION"
+    	}
+    }
+  ]
+}
+
+*** VERTICAL ***
+Buy to open 10 contracts of the XYZ Jan 15, 2016 $40 Call and Sell 
+to open 10 contracts of the XYZ Jan 15, 2016 $42.5 Call for a Net Debit of $1.20 good for the Day.
+{
+  "orderType": "LIMIT",
+  "session": "NORMAL",
+  "price": "1.20",
+  "duration": "DAY",
+  "orderStrategyType": "SINGLE",
+  "orderLegCollection": [
+    {
+      "instruction": "BUY_TO_OPEN",
+      "quantity": 10,
+      "instrument": {
+        "symbol": "XYZ_011516C40",
+        "assetType": "OPTION"
+      }
+    },
+    {
+      "instruction": "SELL_TO_OPEN",
+      "quantity": 10,
+      "instrument": {
+        "symbol": "XYZ_011516C42.5",
+        "assetType": "OPTION"
+      }
+    }
+  ]
+}
+
+*** CUSTOM SPREAD ***
+Buy to open 2 contracts of the XYZ Jan 17, 2020 $43 Put and Sell 
+to open 1 contracts of the XYZ Jan 18, 2019 $45 Put at the Market good for the Day.
+{
+  "orderStrategyType": "SINGLE",
+  "orderType": "MARKET",
+  "complexOrderStrategyType": "CUSTOM",
+  "duration": "DAY",
+  "session": "NORMAL",
+  "orderLegCollection": [
+    {
+      "instruction": "SELL_TO_OPEN",
+      "quantity": 1,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011819P45"
+      }
+    },
+    {
+      "instruction": "BUY_TO_OPEN",
+      "quantity": 2,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011720P43"
+      }
+    }
+  ]
+}
+
+*** Trigger OCO ***
+Buy 5 shares of XYZ at a Limit price of $14.97 good for the Day.  Once filled, 2 sell orders are 
+immediately sent: Sell 5 shares of XYZ at a Limit price of $15.27 and Sell 5 shares of XYZ with a 
+Stop order where the stop price is $11.27.  When one of the sell order fills, the other order is 
+immediately cancelled.  Both Sell orders are Good till Cancel.  Also known as a 1st Trigger OCO order.
+{
+  "orderStrategyType": "TRIGGER",
+  "session": "NORMAL",
+  "duration": "DAY",
+  "orderType": "LIMIT",
+  "price": 14.97,
+  "orderLegCollection": [
+    {
+      "instruction": "BUY_TO_OPEN",
+      "quantity": 5,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011720P43"
+      }
+    }
+  ],
+  "childOrderStrategies": [
+    {
+      "orderStrategyType": "OCO",
+      "childOrderStrategies": [
+        {
+          "orderStrategyType": "SINGLE",
+          "session": "NORMAL",
+          "duration": "GOOD_TILL_CANCEL",
+          "orderType": "LIMIT",
+          "price": 15.27,
+          "orderLegCollection": [
+            {
+              "instruction": "SELL_TO_CLOSE",
+              "quantity": 5,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011720P43"
+              }
+            }
+          ]
+        },
+        {
+          "orderStrategyType": "SINGLE",
+          "session": "NORMAL",
+          "duration": "GOOD_TILL_CANCEL",
+          "orderType": "STOP_LIMIT",
+          "price": 11.00,
+          "stopPrice": 11.27,
+          "orderLegCollection": [
+            {
+              "instruction": "SELL_TO_CLOSE",
+              "quantity": 5,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011720P43" 
+               }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+*** Trigger Condor OCO Condor ***
+
+{
+  "orderStrategyType": "TRIGGER",
+  "session": "NORMAL",
+  "duration": "DAY",
+  "orderType": "LIMIT",
+  "price": 2.00,
+  "orderLegCollection": [
+    {
+      "instruction": "SELL_TO_OPEN",
+      "quantity": 1,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011819P45"
+      }
+    },
+    {
+      "instruction": "BUY_TO_OPEN",
+      "quantity": 1,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011819P43"
+      }
+    },
+    {
+      "instruction": "SELL_TO_OPEN",
+      "quantity": 1,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011819C55"
+      }
+    },
+    {
+      "instruction": "BUY_TO_OPEN",
+      "quantity": 1,
+      "instrument": {
+        "assetType": "OPTION",
+        "symbol": "XYZ_011819C57"
+      }
+    }
+  ],
+  "childOrderStrategies": [
+    {
+      "orderStrategyType": "OCO",
+      "childOrderStrategies": [
+        {
+          "orderStrategyType": "SINGLE",
+          "session": "NORMAL",
+          "duration": "GOOD_TILL_CANCEL",
+          "orderType": "LIMIT",
+          "price": 1.00,
+          "orderLegCollection": [
+            {
+              "instruction": "BUY_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819P45"
+              }
+            },
+            {
+              "instruction": "SELL_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819P43"
+              }
+            },
+            {
+              "instruction": "BUY_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819C55"
+              }
+            },
+            {
+              "instruction": "SELL_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819C57"
+              }
+            }
+          ]
+        },
+        {
+          "orderStrategyType": "SINGLE",
+          "session": "NORMAL",
+          "duration": "GOOD_TILL_CANCEL",
+          "orderType": "STOP_LIMIT",
+          "price": 3.00,
+          "stopPrice": 3.27,
+          "orderLegCollection": [
+            {
+              "instruction": "BUY_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819P45"
+              }
+            },
+            {
+              "instruction": "SELL_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819P43"
+              }
+            },
+            {
+              "instruction": "BUY_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819C55"
+              }
+            },
+            {
+              "instruction": "SELL_TO_OPEN",
+              "quantity": 1,
+              "instrument": {
+                "assetType": "OPTION",
+                "symbol": "XYZ_011819C57"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

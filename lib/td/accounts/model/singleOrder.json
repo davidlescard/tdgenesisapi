@@ -1,0 +1,10 @@
+{
+    "orderStrategyType": "SINGLE",
+    "complexOrderStrategyType": "NONE",
+    "orderType": "LIMIT",
+    "session": "NORMAL",
+    "price": "6.45",
+    "duration": "DAY",
+    "orderLegCollection": [],
+    "childOrderStrategies": []
+}

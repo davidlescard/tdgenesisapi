@@ -1,0 +1,8 @@
+{
+    "instruction": "BUY_TO_OPEN",
+    "quantity": 1,
+    "instrument": {
+        "symbol": "JBLU_082120C12",
+        "assetType": "OPTION"
+    }
+}

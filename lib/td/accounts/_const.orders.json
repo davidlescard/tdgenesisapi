@@ -105,9 +105,19 @@
         "AVERAGE_COST": "AVERAGE_COST",
         "SPECIFIC_LOT": "SPECIFIC_LOT"
     },
-    "orderLegCollection": [
-        {
-            "orderLegType": {
+    "orderLegCollection": {
+        "orderLegType": {
+            "EQUITY": "EQUITY",
+            "OPTION": "OPTION",
+            "INDEX": "INDEX",
+            "MUTUAL_FUND": "MUTUAL_FUND",
+            "CASH_EQUIVALENT": "CASH_EQUIVALENT",
+            "FIXED_INCOME": "FIXED_INCOME",
+            "CURRENCY": "CURRENCY"
+        },
+        "legId": 0,
+        "instrument": {
+            "assetType": {
                 "EQUITY": "EQUITY",
                 "OPTION": "OPTION",
                 "INDEX": "INDEX",
@@ -116,69 +126,57 @@
                 "FIXED_INCOME": "FIXED_INCOME",
                 "CURRENCY": "CURRENCY"
             },
-            "legId": 0,
-            "instrument": {
-                "assetType": {
-                    "EQUITY": "EQUITY",
-                    "OPTION": "OPTION",
-                    "INDEX": "INDEX",
-                    "MUTUAL_FUND": "MUTUAL_FUND",
-                    "CASH_EQUIVALENT": "CASH_EQUIVALENT",
-                    "FIXED_INCOME": "FIXED_INCOME",
-                    "CURRENCY": "CURRENCY"
+            "option": {
+                "type": {
+                    "VANILLA": "VANILLA",
+                    "BINARY": "BINARY",
+                    "BARRIER": "BARRIER"
                 },
-                "option": {
-                    "type": {
-                        "VANILLA": "VANILLA",
-                        "BINARY": "BINARY",
-                        "BARRIER": "BARRIER"
+                "putCall": {
+                    "PUT": "PUT",
+                    "CALL": "CALL"
+                },
+                "optionDeliverables": {
+                    "currencyType": {
+                        "USD": "USD",
+                        "CAD": "CAD",
+                        "EUR": "EUR",
+                        "JPY": "JPY"
                     },
-                    "putCall": {
-                        "PUT": "PUT",
-                        "CALL": "CALL"
-                    },
-                    "optionDeliverables": {
-                        "currencyType": {
-                            "USD": "USD",
-                            "CAD": "CAD",
-                            "EUR": "EUR",
-                            "JPY": "JPY"
-                        },
-                        "assetType": {
-                            "EQUITY": "EQUITY",
-                            "OPTION": "OPTION",
-                            "INDEX": "INDEX",
-                            "MUTUAL_FUND": "MUTUAL_FUND",
-                            "CASH_EQUIVALENT": "CASH_EQUIVALENT",
-                            "FIXED_INCOME": "FIXED_INCOME",
-                            "CURRENCY": "CURRENCY"
-                        }
+                    "assetType": {
+                        "EQUITY": "EQUITY",
+                        "OPTION": "OPTION",
+                        "INDEX": "INDEX",
+                        "MUTUAL_FUND": "MUTUAL_FUND",
+                        "CASH_EQUIVALENT": "CASH_EQUIVALENT",
+                        "FIXED_INCOME": "FIXED_INCOME",
+                        "CURRENCY": "CURRENCY"
                     }
                 }
-            },
-            "instruction": {
-                "BUY": "BUY",
-                "SELL": "SELL",
-                "BUY_TO_COVER": "BUY_TO_COVER",
-                "SELL_SHORT": "SELL_SHORT",
-                "BUY_TO_OPEN": "BUY_TO_OPEN",
-                "BUY_TO_CLOSE": "BUY_TO_CLOSE",
-                "SELL_TO_OPEN": "SELL_TO_OPEN",
-                "SELL_TO_CLOSE": "SELL_TO_CLOSE",
-                "EXCHANGE": "EXCHANGE"
-            },
-            "positionEffect": {
-                "OPENING": "OPENING",
-                "CLOSING": "CLOSING",
-                "AUTOMATIC": "AUTOMATIC"
-            },
-            "quantityType": {
-                "ALL_SHARES": "ALL_SHARES",
-                "DOLLARS": "DOLLARS",
-                "SHARES": "SHARES"
             }
+        },
+        "instruction": {
+            "BUY": "BUY",
+            "SELL": "SELL",
+            "BUY_TO_COVER": "BUY_TO_COVER",
+            "SELL_SHORT": "SELL_SHORT",
+            "BUY_TO_OPEN": "BUY_TO_OPEN",
+            "BUY_TO_CLOSE": "BUY_TO_CLOSE",
+            "SELL_TO_OPEN": "SELL_TO_OPEN",
+            "SELL_TO_CLOSE": "SELL_TO_CLOSE",
+            "EXCHANGE": "EXCHANGE"
+        },
+        "positionEffect": {
+            "OPENING": "OPENING",
+            "CLOSING": "CLOSING",
+            "AUTOMATIC": "AUTOMATIC"
+        },
+        "quantityType": {
+            "ALL_SHARES": "ALL_SHARES",
+            "DOLLARS": "DOLLARS",
+            "SHARES": "SHARES"
         }
-    ],
+    },
     "specialInstruction": {
         "ALL_OR_NONE": "ALL_OR_NONE",
         "DO_NOT_REDUCE": "DO_NOT_REDUCE",
