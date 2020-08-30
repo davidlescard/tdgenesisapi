@@ -8,12 +8,14 @@ const Instrument = require('./lib/td/quote/Instrument');
 const Orders = require('./lib/td/accounts/Orders');
 const Accounts = require('./lib/td/accounts/Accounts');
 const Quote = require('./lib/td/quote/Quote');
+const Volatility = require('./lib/td/logic/calc/Volatility');
 
 async function doit () {
 
     let tickers = ['T', 'DAL', 'JETS', 'CCL', 'AAL', 'SAVE', 'UBER', 'BAC'];
-    // let ticker = 'T';
-    let ticker = 'TSLA';
+    let ticker = 'T';
+    // let ticker = 'TSLA';
+    // let ticker = 'KODK';
     let quotes = {};
     let quote;
     let targetDTE = 45;
@@ -21,7 +23,6 @@ async function doit () {
     let targetLongDelta = 0.05;
 
     let optionChain;
-    let tickerIVMap = {};
     let closestToTargetDTE;
     let netDebitOrCredit;
     let dteStrikesFull = {};
@@ -31,7 +32,9 @@ async function doit () {
     let stopLoss = 2.0;
     let stopLimit = stopLoss * 1.03;
 
-    let daysIVcalc = 30;
+    let tickerIV = []
+
+    
 
     /**
      * get option chain
@@ -40,134 +43,10 @@ async function doit () {
     // console.log(optionChain);
 
     /**
-     * Determine IV per ticker:
-     * - Decide threshold for number of days relevant (i.e. 30)
-     * - aggregate all volatility for strikes, plus days remaining (CALL and PUT)
-     * - calc AVG Call and Put IV per date
-     * - determine weighted AVG IV based on DTE for each date 
-     * - AVG the CALL and PUT sides
+     * calc implied volatility per ticker
      */
-    tickerIVMap[ticker] = {
-        call: {
-            dates: [],
-            sumStrikeCount: 0,
-            sumDte: 0,
-            sumIVweight: 0,     //(sum all IVweight)
-            avgWeightedIV: 0
-        },
-        put: {
-            dates: [],
-            sumStrikeCount: 0,
-            sumDte: 0,
-            sumIVweight: 0,
-            avgWeightedIV: 0
-        },
-        calculatedIV: 0         //(avg of avgWeightedIV, put+call)
-    };
-    // let date = {
-    //     dateStr: undefined,
-    //     dte: undefined,
-    //     strikeCount: 0,
-    //     sumIV: 0,
-    //     avgIV: 0,
-    //     IVweight: 0,                 //(avgIV * dte)
-    //     strikes : []  
-    // }  
-    // let strike = {
-    //     strikeStr: undefined,
-    //     volatility: undefined,
-    //     dte: undefined
-    // }
-    Object.entries(optionChain.callExpDateMap).map(optionDate => {
-        let dateTmp = {strikeCount: 0, sumIV: 0};
-        dateTmp.dateStr = optionDate[0];
-        Object.entries(optionDate[1]).map(strike => {
-            if (strike[1][0].inTheMoney && (strike[1][0].daysToExpiration <= daysIVcalc)) {
-                dateTmp.dte = strike[1][0].daysToExpiration;
-                let vol = strike[1][0].volatility;
-                if (vol !== 'NaN' && vol !== 5) { //cases where volatility = -Inf the API reports with weird values...
-                    dateTmp.strikeCount++;
-                    dateTmp.sumIV += vol;
-                }
-            }
-        });
-        if (dateTmp.dte <= daysIVcalc) {
-            dateTmp.avgIV = dateTmp.sumIV / dateTmp.strikeCount;
-            dateTmp.IVweight = dateTmp.avgIV * dateTmp.dte;
-            console.log('dateTmp.dateStr', dateTmp.dateStr);
-            console.log('dateTmp.avgIV', dateTmp.avgIV);
-            console.log('dateTmp.dte', dateTmp.dte);
-            console.log('dateTmp.IVweight', dateTmp.IVweight);
-            tickerIVMap[ticker].call.dates.push(dateTmp);
-            tickerIVMap[ticker].call.sumStrikeCount += dateTmp.strikeCount;
-            tickerIVMap[ticker].call.sumDte += dateTmp.dte;
-            tickerIVMap[ticker].call.sumIVweight += dateTmp.IVweight;
-        }
-    });
-    // tickerIVMap[ticker].call.avgWeightedIV = tickerIVMap[ticker].call.sumIVweight / tickerIVMap[ticker].call.sumStrikeCount;
-    tickerIVMap[ticker].call.avgWeightedIV = tickerIVMap[ticker].call.sumIVweight / tickerIVMap[ticker].call.sumDte;
 
-    Object.entries(optionChain.putExpDateMap).map(optionDate => {
-        let dateTmp = {strikeCount: 0, sumIV: 0};
-        dateTmp.dateStr = optionDate[0];
-        Object.entries(optionDate[1]).map(strike => {
-            if (strike[1][0].inTheMoney && (strike[1][0].daysToExpiration <= daysIVcalc)) {
-                dateTmp.dte = strike[1][0].daysToExpiration;
-                let vol = strike[1][0].volatility;
-                if (vol !== 'NaN' && vol !== 5) { //cases where volatility = -Inf the API reports with weird values...
-                    dateTmp.strikeCount++;
-                    dateTmp.sumIV += vol;
-                    // console.log('strike', strike[0]);
-                    // console.log('vol', vol);
-                    // console.log('dateTmp.sumIV', dateTmp.sumIV);
-                }
-            }
-        });
-        if (dateTmp.dte <= daysIVcalc) {
-            dateTmp.avgIV = dateTmp.sumIV / dateTmp.strikeCount;
-            dateTmp.IVweight = dateTmp.avgIV * dateTmp.dte;
-            // console.log('dateTmp.dateStr', dateTmp.dateStr);
-            // console.log('dateTmp.avgIV', dateTmp.avgIV);
-            // console.log('dateTmp.dte', dateTmp.dte);
-            // console.log('dateTmp.IVweight', dateTmp.IVweight);
-            tickerIVMap[ticker].put.dates.push(dateTmp);
-            tickerIVMap[ticker].put.sumStrikeCount += dateTmp.strikeCount;
-            tickerIVMap[ticker].put.sumDte += dateTmp.dte;
-            tickerIVMap[ticker].put.sumIVweight += dateTmp.IVweight;
-        }
-    });
-    // tickerIVMap[ticker].put.avgWeightedIV = tickerIVMap[ticker].put.sumIVweight / tickerIVMap[ticker].put.sumStrikeCount;
-    tickerIVMap[ticker].put.avgWeightedIV = tickerIVMap[ticker].put.sumIVweight / tickerIVMap[ticker].put.sumDte;
-    // tickerIVMap
-    // {
-    //     T : {                                                [ticker]
-    //         call : {                                         ['put']
-    //             dates: [                                     []
-    //                 'date': {                                optionDate[0]
-    //                     strikes : [                          optionDate[1]
-    //                         '15.0' : {
-    //                             volatility: value,
-    //                             dte: value
-    //                         }
-    //                     ],
-    //                     dte: value,
-    //                     strikeCount: value,
-    //                     sumIV: value,
-    //                     avgIV: value,
-    //                     IVweight: value //(avgIV * dte)
-    //                 }                
-    //             ],
-    //             sumStrikeCount: value,
-    //             sumIVweight: value, //(sum all IVweight)
-    //             avgWeightedIV: value
-    //         },
-    //         put : {},
-    //         calculatedIV: value //(avg of avgWeightedIV, put+call)
-    //     }
-    // }
-    let callIV = 0;
-
-    console.log(tickerIVMap);
+    console.log(Volatility.impliedVol(optionChain));
     process.exit(0)
 
     quote = (await Quote.getQuotes(ticker)).body;
